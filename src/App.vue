@@ -1,0 +1,352 @@
+<template>
+  <template v-if="navigator.mode == 'main-page'">
+    <div id="app">
+      <b-container class="bv-example-row">
+        <b-row style="display: flex">
+          <b-col class="planner-left-col">
+            <p class="title-logo">PLANNER</p>
+            <ProjectList
+              v-bind:projects="projects"
+              v-bind:mode="mode"
+              v-bind:route="route"
+              @update-route="openProject"
+            />
+          </b-col>
+          <b-col>
+            <ProjectChainList v-bind:chains="chains" style="margin-top: 60px" />
+          </b-col>
+        </b-row>
+      </b-container>
+      <StatsWidget :key="statsFilterSelected" v-bind:filter="decodedFilter()" />
+      <select
+        class="form-select"
+        aria-label="Default select example"
+        v-model="statsFilterSelected"
+      >
+        <option selected value="*">
+          Display all projects (no matter what chain)
+        </option>
+        <optgroup label="----------"></optgroup>
+        <option
+          v-bind:value="'chain$$$' + chain.name"
+          v-for="chain in mem.data.chains"
+        >
+          Chain: {{ chain.name }}
+        </option>
+        <optgroup label="----------"></optgroup>
+        <option
+          v-bind:value="'project$$$' + proj.name"
+          v-for="proj in mem.data.projects"
+        >
+          Project: {{ proj.name }}
+        </option>
+      </select>
+    </div>
+  </template>
+
+  <template v-if="navigator.mode == 'project-edit'">
+    <div id="app">
+      <b-container class="bv-example-row">
+        <b-row style="display: flex">
+          <b-col class="planner-left-col">
+            <p class="title-logo" @click="navigator.mode = 'main-page'">
+              PLANNER
+            </p>
+            <TaskLog
+              v-bind:route="navigator.route"
+              @update-cal="updateCalInsideProject"
+            />
+          </b-col>
+          <b-col>
+            <p
+              class="project-title"
+              contenteditable="true"
+              v-on:keypress.enter.prevent="$event.target.blur()"
+              @focusout="project_renameSelf"
+            >
+              {{ navigator.route }}
+            </p>
+            <ProjectControls />
+          </b-col>
+        </b-row>
+      </b-container>
+      <StatsWidget
+        :key="_internalCalKey"
+        v-bind:filter="['project', navigator.route]"
+      />
+    </div>
+  </template>
+</template>
+
+<script>
+import Vue from 'vue';
+import ProjectList from './components/ProjectList.vue';
+import ProjectChainList from './components/ProjectChainList.vue';
+import AddButton from './components/AddButton.vue';
+import StatsWidget from './components/StatsWidget.vue';
+import TaskLog from './components/TaskLog.vue';
+import ProjectControls from './components/ProjectControls.vue';
+import {default as mem, Log as log} from './Memory.js';
+
+export default {
+  name: 'App',
+  components: {
+    ProjectList,
+    ProjectChainList,
+    AddButton,
+    StatsWidget,
+    TaskLog,
+    ProjectControls
+  },
+  methods: {
+    openProject : function (routeName) {
+      this.cls(routeName);
+      this.navigator.mode = "project-edit";
+      this.navigator.route = routeName;
+    },
+    updateCalInsideProject: function (v) {
+      this.cls("AAAA");
+      this._internalCalKey ++;
+    },
+    project_renameSelf: function (event) {
+      var newName = event.target.innerText;
+      mem.renameProject(this.navigator.route, newName);
+      this.navigator.route = newName;
+    },
+    decodedFilter: function () {
+      if (this.statsFilterSelected == "*") {
+        return [null, null];
+      }
+      else {
+        var dec = this.statsFilterSelected.split("$$$");
+        return dec;
+      }
+    },
+  },
+  data() {
+    return {
+      navigator: {
+        mode: "main-page",
+        route: null
+      },
+      _internalCalKey: 0,
+      statsFilterSelected: "*",
+      cls: console.log,
+      mem: mem,
+      selectedList: [] as any[],
+      /*chains: [
+        {
+          name: "get job at IBM",
+          elements: [
+            {
+              name: "LeetCode Problems",
+              transitionType: "sequential", // sequential|parallel|end
+              transitionControls: ["#dp"],
+            },
+            {
+              name: "Interview at IBM",
+              transitionType: "end"
+            }
+          ]
+        },
+        {
+          name: "get job at IBM",
+          elements: [
+            {
+              name: "LeetCode Problems",
+              transitionType: "parallel",
+            },
+            {
+              name: "Interview at IBM",
+              transitionType: "end"
+            }
+          ]
+        }
+      ],
+      projects: [
+        {
+          name: 'LeetCode Problems',
+          controls: [
+            {
+              name: '#dp',
+              countable: true,
+              done: 50.0,
+            },
+            {
+              name: '#hadoop',
+              countable: true,
+              done: 38.0,
+            },
+            {
+              name: '#arrays',
+              countable: false,
+            },
+          ],
+          tasks: [
+            {
+              content: {
+                desc: 'solved 5 med. tasks on DP #dp',
+              },
+              type: 'solved',
+              author: 'Fyodor Sizov',
+              time: 'Oct 15 11:24:01',
+            },
+            {
+              content: {
+                desc: 'check out a manual #hadoop',
+              },
+              type: 'todo',
+              author: 'Fyodor Sizov',
+              time: 'Oct 14 10:24:01',
+            },
+          ],
+        },
+        {
+          name: 'Other Problems',
+          controls: [
+            {
+              name: '#dp',
+              countable: true,
+              done: 50.0,
+            },
+            {
+              name: '#hadoop',
+              countable: true,
+              done: 38.0,
+            },
+            {
+              name: '#arrays',
+              countable: false,
+            },
+          ],
+          tasks: [
+            {
+              content: {
+                desc: 'solved 5 med. tasks on DP #dp',
+              },
+              type: 'solved',
+              author: 'Fyodor Sizov',
+              time: 'Oct 15 11:24:01',
+            },
+            {
+              content: {
+                desc: 'check out a manual #hadoop',
+              },
+              type: 'todo',
+              author: 'Fyodor Sizov',
+              time: 'Oct 14 10:24:01',
+            },
+          ],
+        },
+        {
+          name: 'Yet More Problems',
+          controls: [
+            {
+              name: '#dp',
+              countable: true,
+              done: 50.0,
+            },
+            {
+              name: '#hadoop',
+              countable: true,
+              done: 38.0,
+            },
+            {
+              name: '#arrays',
+              countable: false,
+            },
+          ],
+          tasks: [
+            {
+              content: {
+                desc: 'solved 5 med. tasks on DP #dp',
+              },
+              type: 'solved',
+              author: 'Fyodor Sizov',
+              time: 'Oct 15 11:24:01',
+            },
+            {
+              content: {
+                desc: 'check out a manual #hadoop',
+              },
+              type: 'todo',
+              author: 'Fyodor Sizov',
+              time: 'Oct 14 10:24:01',
+            },
+          ],
+        },
+      ],*/
+      projects: mem.data.projects,
+      chains: mem.data.chains
+    };
+  },
+};
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 20px;
+}
+
+.control-item {
+  margin: 1px;
+}
+
+.edit-buttons {
+  margin: 1px;
+}
+
+.title-logo {
+  text-align: left;
+  font-size: 30px;
+  font-family: Times New Roman;
+  letter-spacing: 10px;
+  text-decoration: overline;
+  margin-left: 50px;
+}
+
+.project-title {
+  text-align: left;
+  font-size: 20px;
+  font-family: Times New Roman;
+  letter-spacing: 5px;
+  text-decoration: overline;
+  margin-left: 50px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-family: Times New Roman;
+  letter-spacing: 10px;
+  text-decoration: overline;
+}
+
+.card-body {
+  padding: 0.5rem;
+}
+
+select {
+  margin-left: 100px;
+  margin-top: 10px;
+  width: 722px !important;
+}
+
+svg {
+  color: black;
+  cursor: pointer;
+}
+
+.title-logo {
+  cursor: pointer;
+}
+
+.planner-left-col {
+  width: 500px;
+  margin-bottom: 50px;
+}
+</style>
