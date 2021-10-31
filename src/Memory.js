@@ -46,6 +46,19 @@ export default {
     d.chains.push(newEmpty);
     this.data = d;
   },
+  addEmptyControl(projName) {
+    var d = this.data;
+    for (var i = 0; i < d.projects.length; i++) {
+      if (d.projects[i].name == projName) {
+        d.projects[i].controls.push({
+          name: '#' + getRandomInt(Math.pow(10, 4)),
+          countable: true,
+          done: 0.0,
+        });
+      }
+    }
+    this.data = d;
+  },
   addTodayEvent(eventObj) {
     var d = this.data;
     var dsplit = new Date().toISOString().split('T');

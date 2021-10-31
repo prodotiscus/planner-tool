@@ -66,7 +66,7 @@
             >
               {{ navigator.route }}
             </p>
-            <ProjectControls />
+            <ProjectControls v-bind:route="navigator.route" />
           </b-col>
         </b-row>
       </b-container>

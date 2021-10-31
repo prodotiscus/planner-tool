@@ -9,11 +9,11 @@
   },
   "dependencies": {
     "@popperjs/core": "2.10.1",
-    "@vueform/slider": "^2.0.5",
     "bootstrap": "5.1.1",
     "mdbvue": "6.7.3",
     "vue": "3.2.11",
-    "vue-select": "^3.13.0"
+    "vue-select": "^3.13.0",
+    "vue3-slider": "^1.6.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.4.0",
