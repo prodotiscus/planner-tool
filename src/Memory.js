@@ -54,6 +54,7 @@ export default {
           name: '#' + getRandomInt(Math.pow(10, 4)),
           countable: true,
           done: 0.0,
+          id: getRandomInt(Math.pow(10, 8)),
         });
       }
     }
@@ -172,11 +173,20 @@ export default {
 
     for (var i = 0; i < d._taskLog[date].length; i++) {
       if (d._taskLog[date][i].id == item_id) {
-        if (d._taskLog[date][i].type == 'todo') {
-          d._taskLog[date][i].type = 'solved';
+        var target = d._taskLog[date][i];
+        if (target.type == 'todo') {
+          target.type = 'solved';
         } else {
-          d._taskLog[date][i].type = 'todo';
+          target.type = 'todo';
         }
+        var dsplit = new Date().toISOString().split('T');
+        var today = dsplit[0];
+        var time = dsplit[1];
+        target.time = time;
+        if (d._taskLog[today] === undefined) d._taskLog[today] = [];
+        d._taskLog[today].push(target);
+        delete d._taskLog[date][i];
+        d._taskLog[date] = d._taskLog[date].filter((n) => n);
         break;
       }
     }
@@ -200,6 +210,78 @@ export default {
 
     this.data = d;
 
+    return true;
+  },
+
+  control__remove(ctrlName, projName) {
+    var d = this.data;
+    for (var i = 0; i < d.projects.length; i++) {
+      if (d.projects[i].name == projName) {
+        for (var j = 0; j < d.projects[i].controls.length; j++) {
+          if (d.projects[i].controls[j].name == ctrlName) {
+            delete d.projects[i].controls[j];
+            d.projects[i].controls = d.projects[i].controls.filter((n) => n);
+            break;
+          }
+        }
+      }
+    }
+
+    this.data = d;
+    return true;
+  },
+
+  control__rename(id, projName, newCtrlName) {
+    var d = this.data;
+
+    for (var i = 0; i < d.projects.length; i++) {
+      if (d.projects[i].name == projName) {
+        for (var j = 0; j < d.projects[i].controls.length; j++) {
+          if (d.projects[i].controls[j].id == id) {
+            d.projects[i].controls[j].name = newCtrlName;
+            break;
+          }
+        }
+      }
+    }
+
+    this.data = d;
+    return true;
+  },
+
+  control__setCountable(ctrlName, projName, boolCountable) {
+    var d = this.data;
+
+    for (var i = 0; i < d.projects.length; i++) {
+      if (d.projects[i].name == projName) {
+        for (var j = 0; j < d.projects[i].controls.length; j++) {
+          if (d.projects[i].controls[j].name == ctrlName) {
+            d.projects[i].controls[j].countable = boolCountable;
+            break;
+          }
+        }
+      }
+    }
+
+    this.data = d;
+    return true;
+  },
+
+  control__setDone(ctrlName, projName, intDone) {
+    var d = this.data;
+
+    for (var i = 0; i < d.projects.length; i++) {
+      if (d.projects[i].name == projName) {
+        for (var j = 0; j < d.projects[i].controls.length; j++) {
+          if (d.projects[i].controls[j].name == ctrlName) {
+            d.projects[i].controls[j].done = intDone;
+            break;
+          }
+        }
+      }
+    }
+
+    this.data = d;
     return true;
   },
 };

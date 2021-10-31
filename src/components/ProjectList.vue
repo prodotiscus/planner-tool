@@ -25,7 +25,7 @@
             <button
               type="button"
               class="btn btn-primary control-item"
-              v-for="ctrl in proj.controls"
+              v-for="ctrl in sortControls(proj.controls)"
             >
               {{ ctrl.name }}
               <span class="badge badge-light" v-if="ctrl.countable"
@@ -91,6 +91,11 @@ export default {
     },
     updateRouteLocally: function (routeName) {
       this.$emit('update-route', routeName);
+    },
+    sortControls: function (controlsList) {
+      var ctb = controlsList.filter((ctrl) => ctrl.countable);
+      ctb = ctb.sort((a, b) => b.done - a.done);
+      return ctb.slice(0, 3);
     },
   },
 };
