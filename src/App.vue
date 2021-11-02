@@ -82,7 +82,6 @@
 import Vue from 'vue';
 import ProjectList from './components/ProjectList.vue';
 import ProjectChainList from './components/ProjectChainList.vue';
-import AddButton from './components/AddButton.vue';
 import StatsWidget from './components/StatsWidget.vue';
 import TaskLog from './components/TaskLog.vue';
 import ProjectControls from './components/ProjectControls.vue';
@@ -93,7 +92,6 @@ export default {
   components: {
     ProjectList,
     ProjectChainList,
-    AddButton,
     StatsWidget,
     TaskLog,
     ProjectControls
