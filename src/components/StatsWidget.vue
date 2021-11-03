@@ -17,6 +17,7 @@
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 6)"
             data-level="0"
+            @click="openDetails"
           ></rect>
           <rect
             width="10"
@@ -31,6 +32,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 5)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 5)"
+            @click="openDetails"
           ></rect>
           <rect
             width="10"
@@ -45,6 +47,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 4)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 4)"
+            @click="openDetails"
           ></rect>
           <rect
             width="10"
@@ -59,6 +62,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 3)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 3)"
+            @click="openDetails"
           ></rect>
           <rect
             width="10"
@@ -73,6 +77,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 2)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 2)"
+            @click="openDetails"
           ></rect>
           <rect
             width="10"
@@ -87,6 +92,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 1)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 1)"
+            @click="openDetails"
           ></rect>
           <rect
             width="10"
@@ -101,6 +107,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 0)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 0)"
+            @click="openDetails"
           ></rect>
         </g>
         <text x="14" y="-7" class="ContributionCalendar-label">
@@ -204,10 +211,25 @@
         </text>
       </g>
     </svg>
+    <span class="__details" v-if="dateDetails.on"
+      ><span>{{ dateDetails.actionsNumber }} actions</span
+      ><span>{{ dateDetails.date }}</span></span
+    >
   </div>
 </template>
 
 <style>
+.__details {
+  display: inline-grid;
+  border: 5px groove;
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 20px;
+  border-radius: 50%;
+  height: 100px;
+  text-align: center;
+  padding: 10px 10px 20px 10px;
+}
 .calendar-holder {
   text-align: left;
   margin-left: 100px;
@@ -298,6 +320,11 @@ export default {
     filter: Array,
   },
   methods: {
+    openDetails: function (e) {
+      this.dateDetails.on = true;
+      this.dateDetails.date = e.target.getAttribute('data-date');
+      this.dateDetails.actionsNumber = e.target.getAttribute('data-count');
+    },
     generate_X: function () {
       var i = 0;
       var j = 14;
@@ -382,6 +409,11 @@ export default {
       xList: this.generate_X(),
       months: this.months(),
       maxCount: 0,
+      dateDetails: {
+        on: false,
+        date: null,
+        actionsNumber: 0,
+      },
     };
   },
 };
