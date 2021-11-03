@@ -241,4 +241,14 @@ svg {
   width: 500px;
   margin-bottom: 50px;
 }
+
+.badge {
+  color: black !important;
+}
+
+.control-item {
+  border-color: lightgrey;
+  background-color: rgba(0, 0, 0, 0.03);
+  color: black;
+}
 </style>
