@@ -5,9 +5,8 @@ var plannerKey = 'planner_04b6';
 var startTemplate = {
   projects: [],
   chains: [],
-  _taskLog: new Object(),
+  _taskLog: {},
   taskState: {},
-  blocked: false,
 };
 
 function getRandomInt(max) {
