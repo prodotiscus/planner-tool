@@ -162,7 +162,7 @@ export default {
           if (p === null) {
             continue;
           } else if (p.inChains.indexOf(value) !== -1) {
-            yield logDay[i];
+            yield logDay[j];
           }
         }
       }
@@ -345,6 +345,22 @@ export default {
       }
     }
     return blocked;
+  },
+
+  controlsByChain() {
+    var d = this.data;
+    var controls = {};
+    for (var j = 0; j < d.chains.length; j++) {
+      controls[d.chains[j].name] = [];
+      for (var k = 0; k < d.chains[j].elements.length; k++) {
+        if (d.chains[j].elements[k].transitionControls.length === 0) continue;
+        // TODO: support more than 1 control (line 358)
+        controls[d.chains[j].name].push(
+          d.chains[j].elements[k].transitionControls[0]
+        );
+      }
+    }
+    return controls;
   },
 
   projectsWithControls(controlsList) {

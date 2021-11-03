@@ -134,14 +134,21 @@ export default {
     },
     blockControls: function () {
       var bc = this.mem.blockedControls();
+      var byChain = this.mem.controlsByChain();
       this.cls(bc);
       this.cls("block_controls");
       var d = this.mem.data;
       for (var i = 0; i < d.projects.length; i ++) {
         d.projects[i].blocked = false;
+        d.projects[i].inChains = [];
         for (var j = 0; j < d.projects[i].controls.length; j ++) {
           if (bc.indexOf(d.projects[i].controls[j].name) !== -1) {
             d.projects[i].blocked = true;
+          }
+          for (var chainName in byChain) {
+            if (byChain[chainName].indexOf(d.projects[i].controls[j].name) !== -1) {
+              d.projects[i].inChains.push(chainName);
+            }
           }
         }
       }
@@ -161,148 +168,6 @@ export default {
       cls: console.log,
       mem: mem,
       selectedList: [] as any[],
-      /*chains: [
-        {
-          name: "get job at IBM",
-          elements: [
-            {
-              name: "LeetCode Problems",
-              transitionType: "sequential", // sequential|parallel|end
-              transitionControls: ["#dp"],
-            },
-            {
-              name: "Interview at IBM",
-              transitionType: "end"
-            }
-          ]
-        },
-        {
-          name: "get job at IBM",
-          elements: [
-            {
-              name: "LeetCode Problems",
-              transitionType: "parallel",
-            },
-            {
-              name: "Interview at IBM",
-              transitionType: "end"
-            }
-          ]
-        }
-      ],
-      projects: [
-        {
-          name: 'LeetCode Problems',
-          controls: [
-            {
-              name: '#dp',
-              countable: true,
-              done: 50.0,
-            },
-            {
-              name: '#hadoop',
-              countable: true,
-              done: 38.0,
-            },
-            {
-              name: '#arrays',
-              countable: false,
-            },
-          ],
-          tasks: [
-            {
-              content: {
-                desc: 'solved 5 med. tasks on DP #dp',
-              },
-              type: 'solved',
-              author: 'Fyodor Sizov',
-              time: 'Oct 15 11:24:01',
-            },
-            {
-              content: {
-                desc: 'check out a manual #hadoop',
-              },
-              type: 'todo',
-              author: 'Fyodor Sizov',
-              time: 'Oct 14 10:24:01',
-            },
-          ],
-        },
-        {
-          name: 'Other Problems',
-          controls: [
-            {
-              name: '#dp',
-              countable: true,
-              done: 50.0,
-            },
-            {
-              name: '#hadoop',
-              countable: true,
-              done: 38.0,
-            },
-            {
-              name: '#arrays',
-              countable: false,
-            },
-          ],
-          tasks: [
-            {
-              content: {
-                desc: 'solved 5 med. tasks on DP #dp',
-              },
-              type: 'solved',
-              author: 'Fyodor Sizov',
-              time: 'Oct 15 11:24:01',
-            },
-            {
-              content: {
-                desc: 'check out a manual #hadoop',
-              },
-              type: 'todo',
-              author: 'Fyodor Sizov',
-              time: 'Oct 14 10:24:01',
-            },
-          ],
-        },
-        {
-          name: 'Yet More Problems',
-          controls: [
-            {
-              name: '#dp',
-              countable: true,
-              done: 50.0,
-            },
-            {
-              name: '#hadoop',
-              countable: true,
-              done: 38.0,
-            },
-            {
-              name: '#arrays',
-              countable: false,
-            },
-          ],
-          tasks: [
-            {
-              content: {
-                desc: 'solved 5 med. tasks on DP #dp',
-              },
-              type: 'solved',
-              author: 'Fyodor Sizov',
-              time: 'Oct 15 11:24:01',
-            },
-            {
-              content: {
-                desc: 'check out a manual #hadoop',
-              },
-              type: 'todo',
-              author: 'Fyodor Sizov',
-              time: 'Oct 14 10:24:01',
-            },
-          ],
-        },
-      ],*/
       projects: mem.data.projects,
       chains: mem.data.chains
     };
