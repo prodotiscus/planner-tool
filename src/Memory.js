@@ -7,6 +7,7 @@ var startTemplate = {
   chains: [],
   _taskLog: new Object(),
   taskState: {},
+  blocked: false,
 };
 
 function getRandomInt(max) {
@@ -41,6 +42,7 @@ export default {
     var newEmpty = {
       name: 'Chain #' + getRandomInt(Math.pow(10, 4)),
       elements: [],
+      id: getRandomInt(Math.pow(10, 8)),
     };
     var d = this.data;
     d.chains.push(newEmpty);
@@ -112,6 +114,17 @@ export default {
     }
     return false;
   },
+  renameChain(id, new_name) {
+    var d = this.data;
+    for (var i = 0; i < d.chains.length; i++) {
+      if (d.chains[i].id == id) {
+        d.chains[i].name = new_name;
+        this.data = d;
+        return true;
+      }
+    }
+    return false;
+  },
   removeChain(name) {
     var d = this.data;
     d.chains2 = d.chains;
@@ -124,7 +137,20 @@ export default {
     delete d.chains2;
     this.data = d;
   },
-
+  addToChain(name, element) {
+    var d = this.data;
+    for (var i = 0; i < d.chains.length; i++) {
+      if (d.chains[i].name == name) {
+        if (!element.name) {
+          element.name = 'Step ' + (d.chains[i].elements.length + 1);
+        }
+        d.chains[i].elements.push(element);
+        break;
+      }
+    }
+    this.data = d;
+    return true;
+  },
   getFilteredLog(filterPair) {
     var _log = this.data._taskLog;
     function* filterLogDay(logDay, criterion, value) {
@@ -283,6 +309,57 @@ export default {
 
     this.data = d;
     return true;
+  },
+
+  getMaxForControl(controlName) {
+    var d = this.data;
+    var max = 0;
+    for (var i = 0; i < d.projects.length; i++) {
+      for (var j = 0; j < d.projects[i].controls.length; j++) {
+        if (
+          d.projects[i].controls[j].name == controlName &&
+          d.projects[i].controls[j].countable &&
+          d.projects[i].controls[j].done > max
+        ) {
+          max = d.projects[i].controls[j].done;
+        }
+      }
+    }
+    return max;
+  },
+
+  blockedControls() {
+    var d = this.data;
+    var blocked = [];
+    for (var j = 0; j < d.chains.length; j++) {
+      for (var k = 1; k < d.chains[j].elements.length; k++) {
+        // TODO: support more than 1 control (line 335)
+        if (
+          d.chains[j].elements[k - 1].transitionType == 'sequential' &&
+          this.getMaxForControl(
+            d.chains[j].elements[k - 1].transitionControls[0]
+          ) < 100
+        ) {
+          blocked.push(d.chains[j].elements[k].transitionControls[0]);
+        }
+      }
+    }
+    return blocked;
+  },
+
+  projectsWithControls(controlsList) {
+    var d = this.data;
+    var proj = [];
+    for (var i = 0; i < d.projects.length; i++) {
+      for (var j = 0; j < d.projects[i].controls.length; j++) {
+        for (var k = 0; k < controlsList.length; k++) {
+          if (controlsList.indexOf(d.projects[i].controls[j].name) !== -1) {
+            proj.push(d.projects[i].name);
+          }
+        }
+      }
+    }
+    return proj;
   },
 };
 

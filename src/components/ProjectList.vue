@@ -16,7 +16,11 @@
     </span>
     <p></p>
     <div class="project-item-list">
-      <div class="card text-center" v-for="proj in mem.data.projects">
+      <div
+        class="card text-center"
+        v-for="proj in mem.data.projects"
+        v-bind:class="{ __blocked: proj.blocked }"
+      >
         <div class="card-body">
           <h5 class="card-title">{{ proj.name }}</h5>
           <p class="card-text">

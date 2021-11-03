@@ -10,6 +10,7 @@
               v-bind:mode="mode"
               v-bind:route="route"
               @update-route="openProject"
+              :key="_projListUpdate"
             />
           </b-col>
           <b-col>
@@ -96,6 +97,9 @@ export default {
     TaskLog,
     ProjectControls
   },
+  created () {
+    this.blockControlsTimer = setInterval(this.blockControls, 5000);
+  },
   methods: {
     openProject : function (routeName) {
       this.cls(routeName);
@@ -120,6 +124,22 @@ export default {
         return dec;
       }
     },
+    blockControls: function () {
+      var bc = this.mem.blockedControls();
+      this.cls(bc);
+      this.cls("block_controls");
+      var d = this.mem.data;
+      for (var i = 0; i < d.projects.length; i ++) {
+        for (var j = 0; j < d.projects[i].controls.length; j ++) {
+          if (bc.indexOf(d.projects[i].name) !== -1) {
+            d.projects[i].blocked = true;
+            break;
+          }
+        }
+      }
+      this.mem.data = d;
+      this._projListUpdate ++;
+    }
   },
   data() {
     return {
@@ -128,6 +148,7 @@ export default {
         route: null
       },
       _internalCalKey: 0,
+      _projListUpdate: 0,
       statsFilterSelected: "*",
       cls: console.log,
       mem: mem,
