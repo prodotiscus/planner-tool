@@ -128,4 +128,7 @@ export default {
 .project-item-list .card {
   margin-bottom: 10px;
 }
+.__blocked {
+  opacity: 40%;
+}
 </style>

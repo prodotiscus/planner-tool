@@ -139,9 +139,11 @@ export default {
     cl: console.log,
     rmChain: function (e, name) {
       this.mem.removeChain(name);
+      this.$emit('chain-state-changed', 'yes');
     },
     mvChain: function (e, id) {
       this.mem.renameChain(id, e.target.innerText);
+      this.$emit('chain-state-changed', 'yes');
     },
     addElem_ParallelTransition: function (e, chainName) {
       this.mem.addToChain(chainName, {
@@ -151,6 +153,7 @@ export default {
       });
       this.newChain__name = '';
       this.newChain__controls = '';
+      this.$emit('chain-state-changed', 'yes');
     },
     addElem_SequentialTransition: function (e, chainName) {
       this.mem.addToChain(chainName, {
@@ -160,6 +163,7 @@ export default {
       });
       this.newChain__name = '';
       this.newChain__controls = '';
+      this.$emit('chain-state-changed', 'yes');
     },
   },
 };

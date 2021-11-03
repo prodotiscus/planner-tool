@@ -14,7 +14,11 @@
             />
           </b-col>
           <b-col>
-            <ProjectChainList v-bind:chains="chains" style="margin-top: 60px" />
+            <ProjectChainList
+              v-bind:chains="chains"
+              style="margin-top: 60px"
+              @chain-state-changed="blockControls"
+            />
           </b-col>
         </b-row>
       </b-container>
@@ -56,6 +60,7 @@
             <TaskLog
               v-bind:route="navigator.route"
               @update-cal="updateCalInsideProject"
+              @task-state-changed="blockControls"
             />
           </b-col>
           <b-col>
@@ -67,7 +72,10 @@
             >
               {{ navigator.route }}
             </p>
-            <ProjectControls v-bind:route="navigator.route" />
+            <ProjectControls
+              v-bind:route="navigator.route"
+              @control-state-changed="blockControls"
+            />
           </b-col>
         </b-row>
       </b-container>
@@ -97,8 +105,8 @@ export default {
     TaskLog,
     ProjectControls
   },
-  created () {
-    this.blockControlsTimer = setInterval(this.blockControls, 5000);
+  created() {
+    this.blockControls();
   },
   methods: {
     openProject : function (routeName) {
@@ -130,10 +138,10 @@ export default {
       this.cls("block_controls");
       var d = this.mem.data;
       for (var i = 0; i < d.projects.length; i ++) {
+        d.projects[i].blocked = false;
         for (var j = 0; j < d.projects[i].controls.length; j ++) {
-          if (bc.indexOf(d.projects[i].name) !== -1) {
+          if (bc.indexOf(d.projects[i].controls[j].name) !== -1) {
             d.projects[i].blocked = true;
-            break;
           }
         }
       }

@@ -89,15 +89,19 @@ export default {
   methods: {
     __remove: function (ctrlName) {
       this.mem.control__remove(ctrlName, this.route);
+      this.$emit('control-state-changed', 'yes');
     },
     __rename: function ($event, id) {
       this.mem.control__rename(id, this.route, $event.target.innerText);
+      this.$emit('control-state-changed', 'yes');
     },
     __setCountable: function (ctrlName, value) {
       this.mem.control__setCountable(ctrlName, this.route, value);
+      this.$emit('control-state-changed', 'yes');
     },
     __setDone: function (ctrlName, value) {
       this.mem.control__setDone(ctrlName, this.route, value);
+      this.$emit('control-state-changed', 'yes');
     },
   },
   data() {

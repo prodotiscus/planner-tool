@@ -26,6 +26,7 @@
         fill="currentColor"
         class="bi bi-bookmark-check"
         viewBox="0 0 16 16"
+        v-if="!blocked"
         @click="
           mem.addTodayEvent(newSolved());
           $emit('update-cal', 'yes');
@@ -75,8 +76,8 @@
           </svg>
         </div>
         <div
-          class="card-footer project-list-footer text-muted"
-          style="cursor: pointer"
+          class="card-footer project-list-footer text-muted _toggling"
+          v-bind:class="{ '_toggling-blocked': blocked }"
           @click="item__ToggleType($event, item.event.id, item.date)"
         >
           <span v-if="item.event.type == 'todo'">
@@ -132,6 +133,7 @@ export default {
   data() {
     return {
       mem: mem,
+      blocked: mem.getProject(this.route).blocked,
       console_log: console.log,
       projectListing: 0,
     };
@@ -140,15 +142,19 @@ export default {
     item__ModifyDesc: function (event, id, date) {
       mem.item__modifyDesc(date, id, event.target.innerText);
       this.$emit('update-cal', 'yes');
+      this.$emit('task-state-changed', 'yes');
     },
     item__ToggleType: function (event, id, date) {
+      if (this.blocked) return;
       mem.item__toggleTaskType(date, id);
       this.$emit('update-cal', 'yes');
+      this.$emit('task-state-changed', 'yes');
       this.projectListing++;
     },
     item__RemoveSelf: function (event, id, date) {
       mem.item__remove(date, id);
       this.$emit('update-cal', 'yes');
+      this.$emit('task-state-changed', 'yes');
       this.projectListing++;
     },
     getRandomInt: function (max) {
@@ -238,5 +244,11 @@ export default {
   max-width: 200px;
   display: inline-block;
   margin-right: 5px;
+}
+._toggling {
+  cursor: pointer;
+}
+._toggling._toggling-blocked {
+  cursor: not-allowed !important;
 }
 </style>
