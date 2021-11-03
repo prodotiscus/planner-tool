@@ -112,7 +112,7 @@
             <input
               v-model="newChain__name"
               style="float: left"
-              placeholder="Name of project"
+              placeholder="Name of step"
             />
             <span class="adding-hint">add new element</span>
           </div>
