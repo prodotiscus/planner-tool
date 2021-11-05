@@ -1,6 +1,11 @@
 <template>
   <div class="calendar-holder">
-    <svg width="722" height="112" class="js-calendar-graph-svg">
+    <svg
+      width="722"
+      height="112"
+      class="js-calendar-graph-svg"
+      @mouseleave="dateDetails.on = false"
+    >
       <g transform="translate(10, 20)">
         <g v-bind:transform="vars.parentXTransform" v-for="(vars, j) in xList">
           <rect
@@ -17,7 +22,8 @@
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 6)"
             data-level="0"
-            @click="openDetails"
+            @mouseover="openDetails"
+            @mouseout="dateDetails.on = false"
           ></rect>
           <rect
             width="10"
@@ -32,7 +38,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 5)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 5)"
-            @click="openDetails"
+            @mouseover="openDetails"
           ></rect>
           <rect
             width="10"
@@ -47,7 +53,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 4)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 4)"
-            @click="openDetails"
+            @mouseover="openDetails"
           ></rect>
           <rect
             width="10"
@@ -62,7 +68,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 3)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 3)"
-            @click="openDetails"
+            @mouseover="openDetails"
           ></rect>
           <rect
             width="10"
@@ -77,7 +83,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 2)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 2)"
-            @click="openDetails"
+            @mouseover="openDetails"
           ></rect>
           <rect
             width="10"
@@ -92,7 +98,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 1)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 1)"
-            @click="openDetails"
+            @mouseover="openDetails"
           ></rect>
           <rect
             width="10"
@@ -107,7 +113,7 @@
               levelForCount(countForDate(todayMinus(7 * (52 - j) + 0)))
             "
             v-bind:data-date="todayMinus(7 * (52 - j) + 0)"
-            @click="openDetails"
+            @mouseover="openDetails"
           ></rect>
         </g>
         <text x="14" y="-7" class="ContributionCalendar-label">
@@ -219,6 +225,10 @@
 </template>
 
 <style>
+rect:hover {
+  stroke: #555;
+  stroke-width: 1px;
+}
 .__details {
   display: inline-grid;
   border: 5px groove;
@@ -233,7 +243,7 @@
 .calendar-holder {
   text-align: left;
   margin-left: 100px;
-  margin-top: 10px;
+  margin-top: 30px;
 }
 .ContributionCalendar-label {
   font-size: 9px;
