@@ -311,6 +311,7 @@ export default {
   },
 
   getMaxForControl(controlName) {
+    if (!controlName || controlName === '') return 100;
     var d = this.data;
     var max = 0;
     for (var i = 0; i < d.projects.length; i++) {
