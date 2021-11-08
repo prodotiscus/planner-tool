@@ -186,6 +186,9 @@ p.chain {
   margin: 0;
   display: inline;
 }
+.__control {
+  line-height: 0.8;
+}
 .chain-title {
   color: inherit !important;
   margin-top: 10px;
